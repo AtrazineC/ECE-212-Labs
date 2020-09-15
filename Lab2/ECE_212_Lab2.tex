@@ -1,0 +1,433 @@
+\documentclass[10pt, letterpaper, titlepage]{article} % Set font here.
+% Use 'article' for simple documents; use 'report' for larger documents with chapters;
+% use 'book' for even larger documents with parts.
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{color,graphicx,overpic} 
+\usepackage{fancyhdr} % header/footer stuff
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{mathtools} % more math stuff
+\usepackage{siunitx} % for SI units, ex. $3.5 ~ \si{kg.s^{-2}}$
+\usepackage{hyperref} % for hyperlinks
+\usepackage{apple_emoji}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{float}
+\usepackage{blindtext}
+\usepackage{longtable}
+\usepackage{scrextend}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage[framemethod=tikz]{mdframed}
+\usepackage{calc}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage[normalem]{ulem}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\DeclareMathOperator{\di}{d\!} % derivative operator symbol, ex. $\int f(x) \di x$
+\newcommand{\Eval}[3]{\left.#1\right\rvert_{#2}^{#3}} % evaluation bar (ex. evaluating integral or $\Eval{F(x)}{0}{2}$)
+\newcommand*\B{\includegraphics[height=1.5em,valign=B,raise=-0.2em]{BigB.png}}
+\newcommand*\fire{\includegraphics[height=1.5em,valign=B,raise=-0.2em]{Fire.png}}
+
+\definecolor{comment}{RGB}{140, 140, 140}
+\definecolor{text}{RGB}{204, 204, 204}
+\definecolor{string}{rgb}{0.58,0,0}
+\definecolor{backcolour}{RGB}{27, 30, 39}
+\definecolor{variable}{RGB}{244, 63, 78}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{comment},
+    keywordstyle=\color{variable},
+    numberstyle=\tiny\color{text},
+    stringstyle=\color{string},
+    basicstyle=\ttfamily\footnotesize\color{text},
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=-10pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4
+}
+
+\lstdefinelanguage
+   [x64]{Assembler}     % add a "x64" dialect of Assembler
+   {morekeywords={	
+   }} % etc.
+   
+\lstdefinelanguage[Motorola68k]{Assembler}{%
+	morekeywords={	a0, a1, a2, a3, a4, a5, a6, a7, %
+   					d0, d1, d2, d3, d4, d5, d6, d7, %
+				   	ABCD,ADD,%
+					ADDA,ADDI,ADDQ,ADDX,AND,ANDI,ASL,ASR,BCC,BLS,BCS,BLT,BEQ,BMI,BF,BNE,%
+					BGE,BPL,BGT,BT,BHI,BVC,BLE,BVS,BCHG,BCLR,BRA,BSET,BSR,BTST,CHK,CLR,%
+					CMP,CMPA,CMPI,CMPM,DBCC,DBLS,DBCS,DBLT,DBEQ,DBMI,DBF,DBNE,DBGE,DBPL,%
+					DBGT,DBT,DBHI,DBVC,DBLE,DBVS,DIVS,DIVU,EOR,EORI,EXG,EXT,ILLEGAL,JMP,%
+					JSR,LEA,LINK,LSL,LSR,MOVE,MOVEA,MOVEM,MOVEP,MOVEQ,MULS,MULU,NBCD,NEG,%
+					NEGX,NOP,NOT,OR,ORI,PEA,RESET,ROL,ROR,ROXL,ROXR,RTE,RTR,RTS,SBCD,%
+					SCC,SLS,SCS,SLT,SEQ,SMI,SF,SNE,SGE,SPL,SGT,ST,SHI,SVC,SLE,SVS,STOP,%
+					SUB,SUBA,SUBI,SUBQ,SUBX,SWAP,TAS,TRAP,TRAPV,TST,UNLK},%
+					sensitive=false,%
+					morecomment=[l]*,%
+					morecomment=[l] }[keywords,comments,strings]
+
+\lstset{language=[Motorola68k]Assembler}
+\lstset{style=mystyle}
+
+\definecolor{mycolor}{rgb}{0, 0, 0}
+  
+
+\geometry{top=2.7cm,left=1.8cm,right=1.8cm,bottom=2.7cm}
+\setlength{\headheight}{17pt}
+\renewcommand{\baselinestretch}{1.5} 
+\setlength{\parskip}{0.3cm}
+\setlength{\parindent}{0.6cm}
+\titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+
+\newcommand{\barrows}{\textcolor{blue}{\Longrightarrow}\quad}
+\newcommand{\barrow}{\quad\textcolor{blue}{\Longrightarrow}\quad}  
+\newcommand{\sumi}[1][1]{ \sum_{n={#1}}^{\infty} }
+\newcommand{\limi}[1][n]{ \lim_{{#1}\to\infty} }
+
+\title{\textbf{\Huge{
+\begin{center}
+Introduction to\\ Addressing Modes\\ 👌👌👌 \\
+\end{center}
+}}}
+\author{\B enjamin Kong | 1573684\\Lora Ma ||||| 1570935\\ \\ECE 212 Lab Section H11}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\B enjamin Kong \& Lora Ma}
+\lhead{\textit{Introduction to Addressing Modes} 👌👌👌}
+\rfoot{Page \thepage}
+
+\begin{document} 
+\pagenumbering{gobble} 
+\maketitle 
+\thispagestyle{empty}
+\tableofcontents 
+\newpage
+\pagenumbering{arabic}
+
+\begin{multicols*}{2}
+
+
+\section{Introduction}
+As we learned in class, assembly language stores data in memory based on addresses. 
+In this lab, we will investigate several different addressing modes to access memory and also calculate the area under a curve using assembly language. 
+We also experiment with the differences between reading and writing to memory using these different addressing modes. 💣
+
+In part A of the lab, we wrote a program that adds adjacent contents of two arrays stored at different memory locations using three different methods to access memory:
+\begin{itemize}
+	\item Register Indirect With Offset,
+	\item Indexed Register Indirect, and
+	\item Postincrement Register.
+\end{itemize}
+The resulting array from adding the contents with each of the different addressing mode types are stored in three different locations before being output afterwards to the MTTTY console. 
+Note that for the first type of addressing mode (Register Indirect With Offset), we only perform the addition for the first 3 adjacent values to demonstrate that we understand this type of addressing. 💣
+
+In part B of the lab, we created a function that calculated the area underneath a curve given the data points using the trapezoidal rule. 
+Using the data points stored in memory ($x$ and $y$ data points), it is mathematically trivial to calculate the area formed by the data points. 
+Note that the distance between each $x$ data point is either one, two, or four units. 💣
+
+\section{Design}
+\subsection{Part A}
+For part A, we designed three different methods in completing the simple task of taking two arrays with the same number of elements to form a new array.
+This new array contains the adjacent values from the two input arrays added together.
+For example, if we have an array $A = [1, 2, 3]$ and an array $B = [4, 5, 6]$, we would add the adjacent values and get a new array $R = [1 + 4, 2 + 5, 3 + 6] = [5, 7, 9]$. 🍄🍄
+
+\begin{figure}[H]
+   \includegraphics[width=0.45\textwidth]{part1a.png}
+   \centering  
+   \caption{UML. diagram for part 1, part A.} 
+   \label{figure:1}
+\end{figure}
+
+In part 1, we used the Register Indirect With Offset method. 
+In this method, we took the first element in each array given and add them and store the results in the results array. 
+Then, we shift the address of the given arrays to the next element by incrementing their addresses by 4. 
+Then, we add the numbers at those addresses together, increment the address of the results array by 4 to the next empty address, and store the results in that address. 
+Then, we shift the address of the give arrays by incrementing them by 8. 
+Then, we add the numbers at those addresses together, increment the address of the results array by 8 to the next empty address, and store the results in that address. 🍄🍄
+
+\begin{figure}[H]
+   \includegraphics[width=0.35\textwidth]{part1b.png}
+   \centering  
+   \caption{UML. diagram for part 1, part B.} 
+   \label{figure:2}
+\end{figure}
+
+In part 2, we set an initial offset of 0.
+Then, we check if the offset is equal to the size of the given arrays. 
+If it is not equal, we set take the values of each array at the address of the first element plus the longword offset. 
+Then we add the numbers and store it in the results array at the address of its first element plus the longword offset.
+Afterwards, we add one to the offset and the repeat the process until the offset is equal to the number of elements in the original array. 🍄🍄
+
+\begin{figure}[H]
+   \includegraphics[width=0.3\textwidth]{part1c.png}
+   \centering  
+   \caption{UML. diagram for part 1, part C.} 
+   \label{figure:3}
+\end{figure}
+
+In part 3, we check if the size of the array is equal to zero. 
+If it's not equal to zero, we take the current value pointed by the address for each array. 
+These values are then added and then the array addresses are incremented by 1 long word. 
+This value is stored in the results array pointed by its address and then the address is incremented by one long word.
+Afterwords, we subtract one from the array size and repeat the process. 🍄🍄
+
+\subsection{Part B}
+In part B, we used the trapezoidal rule that allowed us to estimate the area under a curve. 
+For example, in the diagram below, we use the trapezoidal rule to demonstrate using the trapezoidal rule for $y = x^2$ across the range $[0, 4]$.
+\begin{figure}[H]
+   \includegraphics[width=0.4\textwidth]{bExample.jpg}
+   \centering  
+   \caption{Diagram for explaining the trapezoid rule.} 
+   \label{figure:4}
+\end{figure}
+In the above figure, we have
+\begin{align*}
+A_1 &= \dfrac{\Delta x}{2} (y_0 + y_1) = \dfrac{0 + 1}{2} = 0.5, \\
+A_2 &= \dfrac{1 + 4}{2} = 2.5, \\
+A_3 &= \dfrac{4 + 9}{2} = 6.5, \\
+A_4 &= \dfrac{9 + 16}{2} = 12.5.
+\end{align*}
+So the area under the graph for $x \in [0,4]$ using the trapezoidal rule is
+\begin{equation}
+A = A_1 + A_2 + A_3 + A_4 = 22.
+\end{equation}
+
+This program first loads addresses. Then the program enters a loop for as long as the number of data left in the array is not equal to zero. This loop has a counter that starts with the number of points and decreases at the beginning of each loop. Afterwards, we calculate the difference between the $x$ values using post-increment. Then, we need to calculate the sum of all the $y$ values. After this, we bit shift the sum of $y$ value to perform multiplication. We continuously shift the sum of $y$ to the  left (multiplying by 2) and shift $\Delta x$ to the right (dividing by 2) until delta $x$ is equal to one. Afterwards, we added the area to our total. In the end, we divided our answer by two by bit shifting right. 🍄🍄
+
+\begin{figure}[H]
+   \includegraphics[width=0.4\textwidth]{part2.png}
+   \centering  
+   \caption{UML diagram for part 2.} 
+   \label{figure:5}
+\end{figure}
+
+\section{Testing}
+\subsection{Part A}
+If properly implemented, part A should correctly add adjacent elements in two different arrays into a new resulting array, regardless of which of the three methods used. 
+These methods were
+\begin{itemize}
+	\item Register Indirect With Offset,
+	\item Indexed Register Indirect, and
+	\item Postincrement Register.
+\end{itemize}
+For example, given two arrays $A = [A_0, A_1, ...]$ and $B = [B_0, B_1, ...]$ to add, our resultant array would be $C = [A_0 + B_0, A_1 + B_1, ...]$.
+In order to test that our program functioned correctly, we ran our code against a test case (one of the DataStorage files) and compared our results to the expected results which were given to us by our TAs. 😱
+
+Upon testing our program, it was evident that our program worked since our output matched what was expected and all methods used to add the arrays resulted in the same resultant array. Our screenshot of the MTTTY terminal output is included in the appendix. 😱
+
+\subsection{Part B}
+If properly implemented, part B should correctly calculate the area under a curve given a set of data points with $x$ and $y$ coordinates. We use the trapezoidal rule to accomplish this: we sum up the area of the trapezoid between each point from the first point to the last point and achieve the area under the graph. 😱
+
+In order to determine if our program actually does this correctly, we ran our code against several test cases provided on eClass given in the form of DataStorage files and compared our output to the expected output provided to us. 😱 
+
+Upon testing our program, it was evident that our program worked since the areas that we found for each test case corresponded to the expected output. Our screenshot of the MTTTY terminal output is included in the appendix. 😱
+
+\section{Questions}
+\textit{What are the advantages of using the different addressing modes covered in this lab?}
+
+Let ``Register Indirect with Offset" be mode 1, ``Indexed Register Indirect" be mode 2, and ``Postincrement Register" be mode 3. 
+An obvious advantage mode 2 and mode 3 have over mode 1 is that since we are essentially able to loop until the array is finished, we can input an array of any size we wish rather than hard-coding each iteration of the loop. 
+It is also significantly less tedious to implement mode 2 and mode 3 since significantly less code is needed when using a loop-like structure. 
+
+Upon comparing mode 2 and mode 3, the difference is less pronounced. 
+Mode 2 is slightly more complicated than mode 3 since mode 2 requires the coder to keep track of the address offset using another variable, while mode 3 automatically increments the address to the next location in memory each time the loop executes, removing the need for the coder to keep track of the current offset. \fire \fire \fire
+
+\textit{If the difference between the X data points are not restricted to be either one, two, or four units, how would you modify your program to calculate the area?}
+
+Since we were not allowed to use MULU or MULS, the approach we used for Part B was using bit shifting. Bit shifting shifts bits either left or right and this multiplies or divides the number by two; therefore, in our program, we can't use values that are not multiples of two. To modify our program to calculate the area, we could implement MULU for unsigned values or MULS for signed values. \fire \fire \fire
+
+\textit{From the data points, what is the function $y = f(x)$? What is the percent error between the theoretical calculated area and the one obtained in the program? Calculate all 3 functions.}
+
+From DataStorage4, it is evident that the function is $f(x) = x^2$, and the data points given indicate that the range we are interested in is $[0, 50]$. Therefore, the actual area under the graph is given by
+\begin{equation}
+	A_1 = \int_0^{50} x^2 \di x = \dfrac{125000}{3} \approx 41666.666.
+\end{equation} 
+Our program output the value of 41675. Therefore, calculating error, we have
+\begin{equation}
+	\epsilon_1 = \dfrac{41675 - 41666.666}{41666.666} \cdot 100\% = 0.02\%. 
+\end{equation}
+
+From DataStorage5, it is evident that the function is again $f(x) = x^2$, and the data points given indicate that the range is $[0, 80]$. Therefore, the actual area under the graph is given by
+\begin{equation}
+	A_2 = \int_0^{80} x^2 \di x = \dfrac{512000}{3} \approx 170666.666.
+\end{equation} 
+Our program output the value of 170710. Therefore, calculating error, we have
+\begin{equation}
+	\epsilon_2 = \dfrac{170710 - 170666.666}{170666.666} \cdot 100\% \approx 0.02539\%. 
+\end{equation}
+
+From DataStorage6, it is evident that the function is again $f(x) = x^2$, and the data points given indicate that the range is $[0, 110]$. Therefore, the actual area under the graph is given by
+\begin{equation}
+	A_3 = \int_0^{110} x^2 \di x = \dfrac{1331000}{3} \approx 443666.666.
+\end{equation} 
+Our program output the value of 443843. Therefore, calculating error, we have
+\begin{equation}
+	\epsilon_3 = \dfrac{443843 - 443666.666}{443666.666} \cdot 100\% \approx 0.03974\%. 
+\end{equation}
+\fire \fire \fire
+
+\section{Conclusion}
+The purpose of this lab was to explore different addressing modes and calculate the area under a curve using assembly language.  😂😂😂
+
+In part A of the lab, we wrote a program that adds adjacent contents in two different arrays into a third resultant array. 
+We completed this task using three different types of addressing modes:
+\begin{itemize}
+	\item Register Indirect With Offset,
+	\item Indexed Register Indirect, and
+	\item Postincrement Register.
+\end{itemize}
+This part of the lab was a success, since we successfully achieved the goal of the program (to add two arrays). 
+Our results for all three methods matched up with the expected results. 😂😂😂
+
+In Part B of the lab, we wrote a program that calculates the area under a curve given $x$ and $y$ data points using the trapezoidal rule. As with the first part of the lab, this part of the lab was also a success since the areas that we output matched up with the expected results. 😂😂😂 
+
+
+\end{multicols*}
+
+\newpage
+
+\section{Appendix}
+\subsection{Part A MTTTY Screenshots}
+\begin{figure}[H]
+   \includegraphics[width=0.52\textwidth]{mttypartA.png}
+   \centering  
+   \caption{Screenshot of MTTTY output for part A.} 
+   \label{figure:6}
+\end{figure}
+
+\subsection{Part B MTTTY Screenshots}
+\begin{figure}[H]
+   \includegraphics[width=0.45\textwidth]{mttypartB.png}
+   \centering  
+   \caption{Screenshot of MTTTY output for part B.} 
+   \label{figure:7}
+\end{figure}
+
+\subsection{Part A Assembler Code}
+\begin{lstlisting}
+	/*Part A **********************************************************/
+	MOVEA.L #0x43000000, %a1 
+	MOVE.L (%a1), %d3 /* d1 is the size of our array*/
+	MOVEA.L #0x43000004, %a1
+	MOVEA.L (%a1), %a2  /* address of first array */
+	MOVEA.L #0x43000008, %a1
+	MOVEA.L (%a1), %a3 /* address of second array */
+	MOVEA.L #0x4300000C, %a1 
+	MOVEA.L (%a1), %a4 /* where to store adjacent sums */
+	
+	MOVE.L (%a2), %d1 /* make a copy of first array value */
+	MOVE.L (%a3), %d2 /* make a copy of second array value */
+	ADD.L %d1, %d2 /* add first array value and second array value and put result into d2*/
+	MOVE.L %d2, (%a4) /* move added value into address at a4 */
+	
+	MOVE.L 4(%a2), %d1 /*increment first array by 4 and move new value into d1*/
+	MOVE.L 4(%a3), %d2 /*increment second array by 4 and move new value into d2*/
+	ADD.L %d1, %d2 /*add values together*/
+	MOVE.L %d2, 4(%a4) /*increment results array by 4 and store added value*/
+	
+	MOVE.L 8(%a2), %d1 /*increment first array by 8 and move new value into d1*/
+	MOVE.L 8(%a3), %d2 /*increment second array by 8 and move new value into d2*/
+	ADD.L %d1, %d2 /*add values together*/
+	MOVE.L %d2, 8(%a4) /*increment results array by 8 and store added value*/
+	
+	/*Part B **********************************************************/
+	
+	MOVE.L #0, %d2  /* Store 0 into d2*/
+	
+	MOVEA.L #0x43000010, %a1 
+	MOVEA.L (%a1), %a4 /*store address for result array*/
+	
+	loop_partB:
+	CMP.L %d2, %d3 /*compare offset and size of array */
+	BEQ next /* exit part B*/
+	
+	MOVE.L (%a2, %d2*4), %d1 /* multiply 4 with d2 and add to a2. Store value in d1 */
+	ADD.L (%a3, %d2*4), %d1 /* Add d2 with 4, a3 and d1. Store value in d1 */
+	MOVE.L %d1, (%a4, %d2*4) /* move the value of d1 into the value of offset*4+a4*/
+	ADDI.L #1, %d2 /* Add 1 to d2*/
+	BRA loop_partB 
+	
+	/*Part C **********************************************************/
+	
+	next:
+	
+	MOVEA.L #0x43000014, %a1 /*intialize value of a1*/
+	MOVEA.L (%a1), %a4 /*initialize a4 with value at a1*/
+	
+	loop_partC:
+	CMPI.L #0, %d3 /*compare size of array to 0*/
+	BEQ exit /* if equal, exit */
+	
+	MOVE.L (%a2)+, %d1 /*put value of first array value into d1 and increment a3*/
+	ADD.L (%a3)+, %d1 /* add value in seond array to d1 and increment a3*/
+	MOVE.L %d1, (%a4)+ /* move value in d1 to array with results and increment the array */
+	SUBI.L #1, %d3 /*subtract 1 from size of array*/
+	BRA loop_partC
+	
+	exit:
+	
+	/*End of program **************************************************/
+\end{lstlisting}
+
+\subsection{Part B Assembler Code}
+\begin{lstlisting}
+	/*Write your program here******************************************/
+	MOVEA.L #0x43000000, %a1 
+	MOVE.L (%a1), %d3 /* load value for data points at address a1 into d3*/
+	
+	MOVEA.L #0x43000004, %a1
+	MOVEA.L (%a1), %a2 /*load array for x points in a2*/
+	
+	MOVEA.L #0x43000008, %a1
+	MOVEA.L (%a1), %a3 /*load array for y points in a3*/
+	
+	MOVEA.L #0x43000010, %a1
+	MOVEA.L (%a1), %a4 /*load results array in a4*/
+	
+	CLR.L %d2 /*clear d2*/
+	
+	loopVals:
+	CMPI.L #1, %d3 /* compare 1 to data point */
+	BEQ exit /* if equal, go to exit */
+	
+	SUBI.L #1, %d3 /*reduce counter by 1*/
+	
+	/* Load x vals, calculate delta x */
+	MOVE.L 4(%a2), %d0
+	SUB.L (%a2)+, %d0
+	
+	/* Load y vals, calculate sum of y */
+	MOVE.L 4(%a3), %d1 /* increment y array and put new val into d1 */ 
+	ADD.L (%a3)+, %d1 /* post increment a3 after adding current a3 val to d1*/
+	
+	loop_X:
+	CMPI.L #1, %d0 /*compare value 1 with d0*/
+	BEQ area /*if equal, calculate area*/
+	LSR.L #1, %d0 /*logical shift right by 1 in d0*/
+	LSL.L #1, %d1 /*logical shift left by 1 in d1*/
+	BRA loop_X
+	
+	area:
+	ADD.L %d1, %d2 /*add d1 and d2*/
+	BRA loopVals 
+	
+	exit:
+	LSR.L #1, %d2 /* divide by 2 */
+	MOVE.L %d2, (%a4) /* store in results */
+	
+	/*End of program **************************************************/
+\end{lstlisting}
+
+\end{document}
